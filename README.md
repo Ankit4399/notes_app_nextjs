@@ -1,130 +1,94 @@
 # Notes App
 
-A modern note-taking application built with Next.js, Prisma, and PostgreSQL. The application allows users to create, edit, delete, search, and organize notes by category through a clean and responsive user interface.
+A modern note-taking application built with **Next.js, Prisma, PostgreSQL, and Tailwind CSS**. Users can create, edit, delete, search, and organize notes by category through a responsive and intuitive interface.
 
----
+## Tech Stack
 
-# Project Overview
-
-Notes App is a full-stack web application designed to help users manage personal notes efficiently. Users can create notes, categorize them, search through existing notes, and update or delete notes whenever needed.
-
-The project demonstrates the use of modern web development practices using Next.js App Router, Prisma ORM, PostgreSQL, API Routes, and responsive UI design.
-
----
-
-# Tech Stack Used
-
-## Frontend
+### Frontend
 
 * Next.js 16 (App Router)
 * React 19
 * TypeScript
 * Tailwind CSS
-* Lucide React Icons
+* Lucide React
 
-## Backend
+### Backend
 
-* Next.js Route Handlers (API Routes)
 * Prisma ORM
 * PostgreSQL
+* Next.js Server Actions
 
-## Development Tools
+### Development & Deployment
 
-* Docker (Local PostgreSQL Database)
+* Docker (Local PostgreSQL)
 * Prisma Studio
-* ESLint
-
-## Deployment
-
-* Vercel
 * Neon PostgreSQL
+* Vercel
 
 ---
 
-# Features Implemented
-
-### Notes Management
+## Features
 
 * Create notes
 * Edit notes
 * Delete notes
-* View all notes
-
-### Search & Filter
-
-* Search notes by title
-* Search notes by content
+* Search notes
 * Filter notes by category
-
-### Categories
-
-* Personal
-* Work
-* Ideas
-* Learning
-* Todo
-* Other
-
-### User Experience
-
-* Responsive design
-* Empty state handling
-* Loading state handling
-* Modern landing page
-* Dark themed interface
+* Responsive UI
+* Dark theme
+* Landing page with live statistics
+* Server Actions for CRUD operations
 
 ---
 
-# How to Run Locally
+## Running Locally
 
-## 1. Clone Repository
+### 1. Clone Repository
 
 ```bash
 git clone <repository-url>
 cd notes_app_nextjs
 ```
 
-## 2. Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 pnpm install
 ```
 
-## 3. Configure Environment Variables
+### 3. Configure Environment Variables
 
-Create a `.env` file in the project root.
+Create `.env`:
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/notes"
 ```
 
-## 4. Start PostgreSQL Database
-
-Using Docker:
+### 4. Start PostgreSQL
 
 ```bash
 docker compose up -d
 ```
 
-## 5. Generate Prisma Client
+### 5. Generate Prisma Client
 
 ```bash
 pnpm prisma generate
 ```
 
-## 6. Sync Database Schema
+### 6. Sync Database
 
 ```bash
 pnpm prisma db push
 ```
 
-## 7. Start Development Server
+### 7. Start Development Server
 
 ```bash
 pnpm dev
 ```
 
-Application will run at:
+Application runs at:
 
 ```text
 http://localhost:3000
@@ -132,19 +96,13 @@ http://localhost:3000
 
 ---
 
-# Environment Variables Required
+## Environment Variables
 
-| Variable     | Description                           |
-| ------------ | ------------------------------------- |
-| DATABASE_URL | PostgreSQL database connection string |
+| Variable     | Description                  |
+| ------------ | ---------------------------- |
+| DATABASE_URL | PostgreSQL connection string |
 
-Example:
-
-```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/notes"
-```
-
-For production (Neon):
+Production example:
 
 ```env
 DATABASE_URL="postgresql://username:password@host/neondb?sslmode=require"
@@ -152,267 +110,111 @@ DATABASE_URL="postgresql://username:password@host/neondb?sslmode=require"
 
 ---
 
-# Database Setup Instructions
+## Database Schema
 
-## Local Development
+### Note
 
-Start PostgreSQL container:
-
-```bash
-docker compose up -d
-```
-
-Push schema:
-
-```bash
-pnpm prisma db push
-```
-
-Open Prisma Studio:
-
-```bash
-pnpm prisma studio
-```
+| Field     | Type     |
+| --------- | -------- |
+| id        | UUID     |
+| title     | String   |
+| content   | String   |
+| category  | String   |
+| createdAt | DateTime |
+| updatedAt | DateTime |
 
 ---
 
-# Database Schema
+## Routes
 
-## Note Model
-
-| Field     | Type          |
-| --------- | ------------- |
-| id        | String (UUID) |
-| title     | String        |
-| content   | String        |
-| category  | String        |
-| createdAt | DateTime      |
-| updatedAt | DateTime      |
+| Route    | Description     |
+| -------- | --------------- |
+| `/`      | Landing Page    |
+| `/notes` | Notes Dashboard |
 
 ---
 
-# Routes / Pages Included
+## Server Actions
 
-## Public Pages
+The application uses Server Actions instead of API routes for note mutations.
 
-### Landing Page
+### Implemented Actions
 
-```text
-/
+* `createNote()`
+* `updateNote()`
+* `deleteNote()`
+
+These actions:
+
+* Interact directly with Prisma
+* Update PostgreSQL records
+* Trigger cache revalidation using `revalidatePath()`
+
+---
+
+## Rendering Strategies
+
+### SSG
+
+Landing page content is statically generated for better performance.
+
+### ISR
+
+The landing page displays note statistics using:
+
+```ts
+export const revalidate = 60;
 ```
 
-Application introduction and call-to-action.
+This regenerates the page every 60 seconds.
 
-### Notes Dashboard
+### CSR
 
-```text
-/notes
-```
+The Notes Dashboard uses Client Components for:
 
-Displays all notes and note management functionality.
-
----
-
-# API Routes Included
-
-## Get All Notes
-
-```http
-GET /api/notes
-```
-
-Returns all notes.
-
----
-
-## Create Note
-
-```http
-POST /api/notes
-```
-
-Creates a new note.
-
-Request Body:
-
-```json
-{
-  "title": "My Note",
-  "content": "Note content",
-  "category": "Learning"
-}
-```
-
----
-
-## Get Single Note
-
-```http
-GET /api/notes/[id]
-```
-
-Returns a specific note.
-
----
-
-## Update Note
-
-```http
-PUT /api/notes/[id]
-```
-
-Updates an existing note.
-
----
-
-## Delete Note
-
-```http
-DELETE /api/notes/[id]
-```
-
-Deletes a note.
-
----
-
-# Server Actions Used
-
-No Server Actions are currently implemented.
-
-The project uses:
-
-* Client Components
-* API Route Handlers
-* Fetch API
-
-for server communication.
-
----
-
-# Rendering Strategies Used
-
-## ISR (Incremental Static Regeneration)
-
-The landing page displays note statistics fetched from PostgreSQL using Prisma.
-The page uses:
-
-export const revalidate = 60
-
-which regenerates the page every 60 seconds, ensuring statistics remain reasonably fresh while reducing database load.
-
----
-
-## SSR (Server Side Rendering)
-
-Not currently used.
-
----
-
-## SSG (Static Site Generation)
-
-Landing page can be statically generated.
-
-```text
-/
-```
-
----
-
-
-
-## Client Side Rendering
-
-Primary rendering strategy used.
-
-Examples:
-
-* Notes list
-* Search functionality
+* Search
 * Category filtering
-* Note CRUD operations
+* Modal state management
+* Form interactions
 
 ---
 
-# Concepts Covered
+## Concepts Covered
 
-This project demonstrates:
-
-### Next.js
-
-* App Router
-* Route Handlers
+* Next.js App Router
+* Server Actions
+* ISR (Incremental Static Regeneration)
 * Client Components
-* Dynamic Routes
-
-### React
-
-* useState
-* useEffect
-* useMemo
-* Component Composition
-
-### Database
-
-* PostgreSQL
 * Prisma ORM
+* PostgreSQL
 * CRUD Operations
-
-### API Development
-
-* RESTful APIs
-* Request Handling
-* Error Handling
-
-### UI Development
-
 * Tailwind CSS
-* Responsive Design
-* Dark Theme
-* Reusable Components
-
-### Deployment
-
-* Vercel
-* Neon PostgreSQL
-* Environment Variables
+* Docker
+* Vercel Deployment
 
 ---
-
-# Assumptions and Limitations
-
-## Assumptions
-
-* PostgreSQL database is available.
-* Environment variables are configured correctly.
-* User has Docker installed for local database setup.
 
 ## Limitations
 
-* No authentication system.
-* Notes are not user-specific.
-* No file attachments.
-* No rich text editor.
-* No note sharing functionality.
-* No pagination for large datasets.
-* No offline support.
+* No authentication
+* Notes are not user-specific
+* No file attachments
+* No rich text editor
+* No real-time updates
 
 ---
 
-# Future Improvements
+## Future Improvements
 
-* Authentication with Auth.js
-* Tags and labels
-* Note sharing
-* Favorites and archive
-* Pagination
-* Search highlighting
+* Authentication (Auth.js)
+* User-specific notes
+* Tags & Labels
 * Markdown support
+* Note sharing
 * Real-time synchronization
 
 ---
 
-# Author
+## Author
 
-Ankit Kumar
-
-Built with Next.js, Prisma, PostgreSQL, and Tailwind CSS.
+**Ankit Kumar**
