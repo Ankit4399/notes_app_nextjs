@@ -1,245 +1,242 @@
-'use client';
+import Link from "next/link";
+import {
+  ArrowRight,
+  Pencil,
+  Folder,
+  Search,
+  Shield,
+  Heart,
+  FileText,
+  Users,
+  Zap,
+} from "lucide-react";
 
-import { Note, fetchNotes } from '@/lib/note';
-import { useEffect, useMemo, useState } from 'react';
-import NoteCard from '@/components/note/NoteCard';
-import NoteForm from '@/components/note/NoteForm';
-import SearchBar from '@/components/note/SearchBar';
-import CategoryFilter from '@/components/note/CategoryFilter';
-import { Plus, BookOpen, FilePenLine } from 'lucide-react';
-
-export default function Home() {
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingNote, setEditingNote] = useState<Note | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [allCategories] = useState<string[]>([
-    'Personal',
-    'Work',
-    'Ideas',
-    'Learning',
-    'Todo',
-    'Other',
-  ]);
-
-  const filteredNotes = useMemo(() => {
-    let result = notes;
-
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (note) =>
-          note.title.toLowerCase().includes(query) ||
-          note.content.toLowerCase().includes(query)
-      );
-    }
-
-    if (selectedCategory) {
-      result = result.filter((note) => note.category === selectedCategory);
-    }
-
-    return result;
-  }, [notes, searchQuery, selectedCategory]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    fetchNotes()
-      .then((data) => {
-        if (isMounted) {
-          setNotes(data || []);
-        }
-      })
-      .catch((error) => {
-        console.error('Failed to load notes:', error);
-      })
-      .finally(() => {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const handleCreateOrUpdate = async (data: {
-    title: string;
-    content: string;
-    category: string;
-  }) => {
-    try {
-      if (editingNote) {
-        // Update note
-        const res = await fetch(`/api/notes/${editingNote.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        if (res.ok) {
-          const updatedNote = await res.json();
-          setNotes(
-            notes.map((n) =>
-              n.id === editingNote.id ? updatedNote.data : n
-            )
-          );
-        }
-      } else {
-        // Create note
-        const res = await fetch('/api/notes', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        if (res.ok) {
-          const newNote = await res.json();
-          setNotes([newNote.data, ...notes]);
-        }
-      }
-      setEditingNote(null);
-      setIsFormOpen(false);
-    } catch (error) {
-      console.error('Failed to save note:', error);
-      alert('Failed to save note');
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this note?')) return;
-
-    try {
-      const res = await fetch(`/api/notes/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setNotes(notes.filter((n) => n.id !== id));
-      }
-    } catch (error) {
-      console.error('Failed to delete note:', error);
-      alert('Failed to delete note');
-    }
-  };
-
-  const handleEdit = (note: Note) => {
-    setEditingNote(note);
-    setIsFormOpen(true);
-  };
-
-  const handleNewNote = () => {
-    setEditingNote(null);
-    setIsFormOpen(true);
-  };
-
-  const handleCloseForm = () => {
-    setIsFormOpen(false);
-    setEditingNote(null);
-  };
-
+export default function LandingPage() {
   return (
-    <main className="min-h-dvh w-full bg-[#fbf2ef] text-[#353A47] dark:bg-[#242936] dark:text-[#fff7f5]">
-      <div className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
-        <header className="mb-6 flex flex-col gap-5 rounded-lg border border-[#353A47]/10 bg-[#353A47] px-5 py-5 shadow-lg shadow-[#885A5A]/15 dark:border-[#F7C1BB]/15 dark:bg-[#353A47] sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <div className="min-w-0">
-            <div className="flex items-center gap-3">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#F7C1BB] text-[#353A47]">
-                <BookOpen size={28} />
-              </span>
-              <h1 className="truncate text-4xl font-bold tracking-normal text-white sm:text-5xl">
-                My Notes
-              </h1>
-            </div>
-            <p className="mt-2 text-sm font-medium text-[#F7C1BB]">
-              {filteredNotes.length} note{filteredNotes.length !== 1 ? 's' : ''}
-            </p>
-          </div>
-          <button
-            onClick={handleNewNote}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#DC136C] px-5 py-3 font-bold text-white shadow-md shadow-[#DC136C]/25 transition-colors duration-200 hover:bg-[#b90f5b] active:bg-[#9f0d4f] sm:w-auto"
-          >
-            <Plus size={20} />
-            <span>New Note</span>
-          </button>
-        </header>
+    <main className="min-h-screen bg-[#0B1120] text-white overflow-hidden">
+      {/* Background Glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(236,72,153,0.15),transparent_25%),radial-gradient(circle_at_80%_30%,rgba(168,85,247,0.15),transparent_25%)]" />
 
-        <section className="mb-8 grid gap-4 rounded-lg border border-[#F7C1BB] bg-white/90 p-4 shadow-sm shadow-[#885A5A]/10 dark:border-[#66515a] dark:bg-[#353A47] sm:p-5 lg:grid-cols-[minmax(20rem,28rem)_1fr] lg:items-end">
+      {/* Navbar */}
+      <nav className="relative z-10 max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-pink-200 flex items-center justify-center">
+            📝
+          </div>
+
+          <h1 className="font-bold text-2xl">My Notes</h1>
+        </div>
+
+        <div className="hidden md:flex gap-10 text-gray-300">
+          <a href="#features">Features</a>
+          <a href="#how">How it Works</a>
+          <a href="#about">About</a>
+        </div>
+
+        <Link
+          href="/notes"
+          className="bg-pink-600 hover:bg-pink-500 transition px-6 py-3 rounded-xl font-semibold flex items-center gap-2"
+        >
+          Get Started
+          <ArrowRight size={18} />
+        </Link>
+      </nav>
+
+      {/* Hero */}
+      <section className="relative z-10 max-w-7xl mx-auto px-6 py-20">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left */}
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-[#885A5A] dark:text-[#F7C1BB]">
-              Search
+            <div className="inline-flex items-center rounded-full border border-pink-500/20 bg-pink-500/10 px-4 py-2 text-sm text-pink-300">
+              ✨ Organize. Write. Remember.
+            </div>
+
+            <h1 className="mt-8 text-6xl font-bold leading-tight">
+              Your thoughts,
+              <br />
+              beautifully{" "}
+              <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                organized.
+              </span>
+            </h1>
+
+            <p className="mt-6 text-xl text-gray-400 max-w-xl">
+              Capture ideas, organize your thoughts, and find what matters —
+              instantly.
             </p>
-            <SearchBar onSearch={setSearchQuery} />
+
+            <div className="mt-10 flex gap-5">
+              <Link
+                href="/notes"
+                className="bg-pink-600 hover:bg-pink-500 px-8 py-4 rounded-xl font-semibold flex items-center gap-2"
+              >
+                Get Started
+                <ArrowRight size={18} />
+              </Link>
+
+              <button className="text-lg text-gray-300 hover:text-white">
+                Learn More →
+              </button>
+            </div>
           </div>
 
-          <div className="min-w-0">
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-[#885A5A] dark:text-[#F7C1BB]">
-              Filter by Category
-            </p>
-            <CategoryFilter
-              categories={allCategories}
-              onFilter={setSelectedCategory}
-            />
+          {/* Right Hero Illustration */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-pink-500/20 blur-[120px]" />
+
+            <div className="relative bg-[#131C31] border border-pink-500/20 rounded-3xl p-8 shadow-2xl">
+              <div className="space-y-4">
+                <div className="bg-[#1A243D] rounded-xl p-4">
+                  <h3 className="font-semibold text-pink-300">
+                    Project Ideas
+                  </h3>
+
+                  <ul className="mt-3 text-gray-400 space-y-2">
+                    <li>✓ Build Notes App</li>
+                    <li>✓ Next.js Portfolio</li>
+                    <li>✓ AI Assistant</li>
+                  </ul>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-[#1A243D] p-4 rounded-xl">
+                    <div className="text-pink-400 text-sm">
+                      Daily Journal
+                    </div>
+
+                    <div className="mt-2 text-gray-300">
+                      Productive day 🚀
+                    </div>
+                  </div>
+
+                  <div className="bg-[#1A243D] p-4 rounded-xl">
+                    <div className="text-purple-400 text-sm">Learning</div>
+
+                    <div className="mt-2 text-gray-300">
+                      Next.js App Router
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-[#1A243D] rounded-xl p-4">
+                  <div className="flex items-center gap-2 text-green-400">
+                    <Search size={18} />
+                    Instant Search
+                  </div>
+
+                  <p className="text-gray-400 mt-2">
+                    Find any note within seconds.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {isLoading ? (
-          <section className="grid flex-1 place-items-center py-16">
-            <div className="flex flex-col items-center text-center">
-              <div className="relative mb-6 h-16 w-16">
-                <div className="absolute inset-0 animate-pulse rounded-full bg-[#DC136C] opacity-20"></div>
-                <div className="absolute inset-2 animate-spin rounded-full border-4 border-transparent border-r-[#DC136C] border-t-[#84B082]"></div>
-              </div>
-              <p className="font-medium text-[#885A5A] dark:text-[#F7C1BB]">
-                Loading your notes...
-              </p>
-            </div>
-          </section>
-        ) : filteredNotes.length === 0 ? (
-          <section className="grid flex-1 place-items-center py-12">
-            <div className="mx-auto flex w-full max-w-xl flex-col items-center text-center">
-              <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-lg border border-[#F7C1BB] bg-white text-[#DC136C] shadow-sm dark:border-[#66515a] dark:bg-[#353A47] dark:text-[#F7C1BB]">
-                <FilePenLine size={52} strokeWidth={1.8} />
-              </div>
-              <h3 className="mb-3 text-2xl font-bold text-[#353A47] dark:text-white sm:text-3xl">
-                {notes.length === 0 ? 'No notes yet' : 'No notes match your filters'}
-              </h3>
-              <p className="mb-8 text-base text-[#885A5A] dark:text-[#F7C1BB] sm:text-lg">
-                {notes.length === 0
-                  ? 'Create your first note to get started'
-                  : 'Try adjusting your search or filters'}
-              </p>
-              {notes.length === 0 && (
-                <button
-                  onClick={handleNewNote}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#DC136C] px-6 py-3 font-bold text-white shadow-md shadow-[#DC136C]/25 transition-colors duration-200 hover:bg-[#b90f5b] active:bg-[#9f0d4f]"
-                >
-                  <Plus size={20} />
-                  Create First Note
-                </button>
-              )}
-            </div>
-          </section>
-        ) : (
-          <section className="grid grid-cols-1 gap-5 pb-8 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredNotes.map((note) => (
-              <NoteCard
-                key={note.id}
-                note={note}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </section>
-        )}
-      </div>
+      {/* Features */}
+      <section
+        id="features"
+        className="relative z-10 max-w-7xl mx-auto px-6 py-20"
+      >
+        <div className="grid md:grid-cols-4 gap-6">
+          <FeatureCard
+            icon={<Pencil />}
+            title="Write Freely"
+            text="Capture your ideas and notes without distractions."
+          />
 
-      {isFormOpen && (
-        <NoteForm
-          key={editingNote?.id ?? 'new-note'}
-          note={editingNote}
-          onClose={handleCloseForm}
-          onSave={handleCreateOrUpdate}
-        />
-      )}
+          <FeatureCard
+            icon={<Folder />}
+            title="Stay Organized"
+            text="Keep notes neatly categorized."
+          />
+
+          <FeatureCard
+            icon={<Search />}
+            title="Find Instantly"
+            text="Powerful search to find anything."
+          />
+
+          <FeatureCard
+            icon={<Shield />}
+            title="Private & Safe"
+            text="Your notes belong only to you."
+          />
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="relative z-10 max-w-7xl mx-auto px-6 pb-20">
+        <div className="border border-pink-500/10 rounded-3xl bg-[#111827]/70 backdrop-blur p-8">
+          <div className="grid md:grid-cols-5 gap-8 items-center">
+            <div className="flex gap-4">
+              <Heart className="text-pink-500" />
+              <div>
+                <h3 className="font-semibold">
+                  Loved by productivity enthusiasts
+                </h3>
+
+                <p className="text-gray-400 text-sm">
+                  Join thousands using My Notes.
+                </p>
+              </div>
+            </div>
+
+            <Stat icon={<FileText />} value="10K+" label="Notes Created" />
+            <Stat icon={<Users />} value="5K+" label="Users" />
+            <Stat icon={<Zap />} value="99.9%" label="Uptime" />
+
+            <Link
+              href="/notes"
+              className="bg-pink-600 text-center py-4 rounded-xl font-semibold hover:bg-pink-500"
+            >
+              Get Started
+            </Link>
+          </div>
+        </div>
+      </section>
     </main>
+  );
+}
+
+function FeatureCard({
+  icon,
+  title,
+  text,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="bg-[#131C31] border border-white/5 rounded-2xl p-6">
+      <div className="text-pink-400 mb-4">{icon}</div>
+
+      <h3 className="font-semibold text-lg">{title}</h3>
+
+      <p className="text-gray-400 mt-2">{text}</p>
+    </div>
+  );
+}
+
+function Stat({
+  icon,
+  value,
+  label,
+}: {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+}) {
+  return (
+    <div className="flex gap-3 items-center">
+      <div className="text-purple-400">{icon}</div>
+
+      <div>
+        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-gray-400 text-sm">{label}</div>
+      </div>
+    </div>
   );
 }
