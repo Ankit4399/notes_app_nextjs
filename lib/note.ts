@@ -3,6 +3,7 @@ export type Note = {
     title: string
     content: string
     category: string
+    createdAt: string
 }
 
 export async function fetchNotes(){
