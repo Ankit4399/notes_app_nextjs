@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { prisma } from "@/lib/db";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -13,7 +14,14 @@ import {
   BookOpen,
 } from "lucide-react";
 
-export default function LandingPage() {
+export const revalidate = 60;
+
+export default async function LandingPage() {
+  const totalNotes = await prisma.note.count();
+
+  const categories = await prisma.note.groupBy({
+    by: ["category"],
+  });
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#0B1120] text-white">
       {/* Background */}
@@ -165,14 +173,14 @@ export default function LandingPage() {
 
             <Stat
               icon={<FileText size={22} />}
-              value="10K+"
+              value={totalNotes.toString()}
               label="Notes Created"
             />
 
             <Stat
-              icon={<Users size={22} />}
-              value="5K+"
-              label="Users"
+              icon={<Folder size={22} />}
+              value={categories.length.toString()}
+              label="Categories"
             />
 
             <Stat
