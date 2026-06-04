@@ -2,11 +2,12 @@
 
 import { Note } from '@/lib/note';
 import { Trash2, Edit2 } from 'lucide-react';
+import { deleteNote } from '@/app/actions/note-action';
+import { useTransition } from 'react';
 
 interface NoteCardProps {
   note: Note;
   onEdit: (note: Note) => void;
-  onDelete: (id: string) => void;
 }
 
 const categoryColors: Record<string, { bar: string; badge: string }> = {
@@ -36,7 +37,7 @@ const categoryColors: Record<string, { bar: string; badge: string }> = {
   },
 };
 
-export default function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
+export default function NoteCard({ note, onEdit }: NoteCardProps) {
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
@@ -47,6 +48,21 @@ export default function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
   };
 
   const colors = categoryColors[note.category] ?? categoryColors.Other;
+
+  const [isPending, startTransition] = useTransition();
+
+  const handleDelete = () => {
+    if (!confirm('Delete this note?')) return;
+
+    startTransition(async () => {
+      try {
+        await deleteNote(note.id)
+      } catch (error) {
+        console.error(error);
+        alert('Failed to delete note');
+      }
+    })
+  }
 
   return (
     <div className="group relative cursor-pointer overflow-hidden rounded-lg border border-[#F7C1BB] bg-white p-5 shadow-sm shadow-[#885A5A]/10 transition-colors duration-200 hover:border-[#84B082] hover:shadow-md dark:border-[#66515a] dark:bg-[#353A47] dark:hover:border-[#84B082]">
@@ -67,6 +83,7 @@ export default function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
         </div>
         <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
+            type='button'
             onClick={() => onEdit(note)}
             className="rounded-lg p-1.5 text-[#353A47] transition-colors duration-200 hover:bg-[#F7C1BB]/50 hover:text-[#DC136C] dark:text-[#fff7f5] dark:hover:bg-[#463d45]"
             aria-label="Edit note"
@@ -74,11 +91,17 @@ export default function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
             <Edit2 size={16} />
           </button>
           <button
-            onClick={() => onDelete(note.id)}
+            type='button'
+            disabled={isPending}
+            onClick={handleDelete}
             className="rounded-lg p-1.5 text-red-600 transition-colors duration-200 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/40"
             aria-label="Delete note"
           >
-            <Trash2 size={16} />
+            {isPending ? (
+              <span className="text-xs">...</span>
+            ) : (
+              <Trash2 size={16} />
+            )}
           </button>
         </div>
       </div>

@@ -3,39 +3,56 @@
 import { Note } from '@/lib/note';
 import { useState } from 'react';
 import { PenLine, Save, X } from 'lucide-react';
+import { createNote, updateNote } from '@/app/actions/note-action';
+import { useTransition } from 'react';
 
 interface NoteFormProps {
   note?: Note | null;
   onClose: () => void;
-  onSave: (data: { title: string; content: string; category: string }) => Promise<void>;
 }
 
 const CATEGORIES = ['Personal', 'Work', 'Ideas', 'Learning', 'Todo', 'Other'];
 
-export default function NoteForm({ note, onClose, onSave }: NoteFormProps) {
+export default function NoteForm({ note, onClose }: NoteFormProps) {
   const [title, setTitle] = useState(note?.title ?? '');
   const [content, setContent] = useState(note?.content ?? '');
   const [category, setCategory] = useState(note?.category ?? 'Personal');
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const [isPending, startTransition] = useTransition();
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!title.trim() || !content.trim()) {
       alert('Please fill in all fields');
       return;
     }
 
-    setIsLoading(true);
-    try {
-      await onSave({ title, content, category });
-      setTitle('');
-      setContent('');
-      setCategory('Personal');
-      onClose();
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const formData = new FormData();
+    formData.append('title', title)
+    formData.append('content', content)
+    formData.append('category', category)
+
+    startTransition(async () => {
+      try {
+        if (note) {
+          await updateNote(note.id, formData);
+        } else {
+          await createNote(formData);
+        }
+
+        setTitle('');
+        setContent('');
+        setCategory('Personal');
+
+        onClose();
+      } catch (error) {
+        console.error(error);
+        alert('Failed to save note');
+      }
+    });
+
+  }
 
   return (
     <div className="modal-overlay fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -60,6 +77,7 @@ export default function NoteForm({ note, onClose, onSave }: NoteFormProps) {
               Note Title
             </label>
             <input
+              name='title'
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -73,6 +91,7 @@ export default function NoteForm({ note, onClose, onSave }: NoteFormProps) {
               Category
             </label>
             <select
+              name='category'
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="w-full rounded-lg border-2 border-[#F7C1BB] bg-white px-5 py-3 font-medium text-[#353A47] transition-colors duration-200 focus:border-[#84B082] focus:outline-none focus:ring-4 focus:ring-[#84B082]/20 dark:border-[#66515a] dark:bg-[#463d45] dark:text-white dark:focus:border-[#84B082] dark:focus:ring-[#84B082]/20"
@@ -90,6 +109,7 @@ export default function NoteForm({ note, onClose, onSave }: NoteFormProps) {
               Content
             </label>
             <textarea
+              name='content'
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Write your note here..."
@@ -108,11 +128,11 @@ export default function NoteForm({ note, onClose, onSave }: NoteFormProps) {
             </button>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isPending}
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#DC136C] px-8 py-2.5 font-bold text-white shadow-md shadow-[#DC136C]/25 transition-colors duration-200 hover:bg-[#b90f5b] active:bg-[#9f0d4f] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Save size={18} />
-              {isLoading ? 'Saving...' : 'Save Note'}
+              {isPending ? 'Saving...' : 'Save Note'}
             </button>
           </div>
         </form>
