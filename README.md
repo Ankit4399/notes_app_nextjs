@@ -291,6 +291,17 @@ for server communication.
 
 # Rendering Strategies Used
 
+## ISR (Incremental Static Regeneration)
+
+The landing page displays note statistics fetched from PostgreSQL using Prisma.
+The page uses:
+
+export const revalidate = 60
+
+which regenerates the page every 60 seconds, ensuring statistics remain reasonably fresh while reducing database load.
+
+---
+
 ## SSR (Server Side Rendering)
 
 Not currently used.
