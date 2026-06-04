@@ -8,14 +8,14 @@ export type Note = {
 
 export function getBaseUrl() {
     if (process.env.VERCEL_URL) {
-        return `https://${process.env.VERCEL_URL}`;
+        return `https://notes-app-nextjs-weld.vercel.app/`;
     }
 
     return `http://localhost:${process.env.PORT ?? 3000}`;
 }
 
 export async function fetchNotes() {
-    const res = await fetch(`${getBaseUrl()}/notes`, {
+    const res = await fetch(`${getBaseUrl()}/api/notes`, {
         cache: 'no-store',
     });
 
