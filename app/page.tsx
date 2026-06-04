@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -9,33 +10,46 @@ import {
   FileText,
   Users,
   Zap,
+  BookOpen,
 } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-[#0B1120] text-white overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(236,72,153,0.15),transparent_25%),radial-gradient(circle_at_80%_30%,rgba(168,85,247,0.15),transparent_25%)]" />
+    <main className="relative min-h-screen overflow-hidden bg-[#0B1120] text-white">
+      {/* Background */}
+      <div className="absolute inset-0">
+        <div className="absolute left-20 top-20 h-96 w-96 rounded-full bg-pink-500/10 blur-[140px]" />
+        <div className="absolute right-20 top-40 h-96 w-96 rounded-full bg-purple-500/10 blur-[140px]" />
+        <div className="absolute bottom-0 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-pink-500/10 blur-[140px]" />
+      </div>
 
       {/* Navbar */}
-      <nav className="relative z-10 max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-pink-200 flex items-center justify-center">
-            📝
+      <nav className="relative z-20 mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#F7C1BB] text-[#353A47]">
+            <BookOpen size={28} />
           </div>
 
-          <h1 className="font-bold text-2xl">My Notes</h1>
-        </div>
+          <h1 className="text-2xl font-bold">My Notes</h1>
+        </Link>
 
-        <div className="hidden md:flex gap-10 text-gray-300">
-          <a href="#features">Features</a>
-          <a href="#how">How it Works</a>
-          <a href="#about">About</a>
+        <div className="hidden items-center gap-10 text-gray-300 md:flex">
+          <a href="#features" className="hover:text-white">
+            Features
+          </a>
+
+          <a href="#stats" className="hover:text-white">
+            Stats
+          </a>
+
+          <a href="#about" className="hover:text-white">
+            About
+          </a>
         </div>
 
         <Link
           href="/notes"
-          className="bg-pink-600 hover:bg-pink-500 transition px-6 py-3 rounded-xl font-semibold flex items-center gap-2"
+          className="flex items-center gap-2 rounded-xl bg-[#DC136C] px-6 py-3 font-semibold text-white transition hover:bg-[#c01160]"
         >
           Get Started
           <ArrowRight size={18} />
@@ -43,93 +57,55 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 py-20">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-20">
+        <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.2fr]">
           {/* Left */}
           <div>
             <div className="inline-flex items-center rounded-full border border-pink-500/20 bg-pink-500/10 px-4 py-2 text-sm text-pink-300">
               ✨ Organize. Write. Remember.
             </div>
 
-            <h1 className="mt-8 text-6xl font-bold leading-tight">
+            <h1 className="mt-8 text-5xl font-bold leading-tight md:text-7xl">
               Your thoughts,
               <br />
               beautifully{" "}
-              <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-pink-500 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 organized.
               </span>
             </h1>
 
-            <p className="mt-6 text-xl text-gray-400 max-w-xl">
+            <p className="mt-6 max-w-xl text-lg text-gray-400 md:text-xl">
               Capture ideas, organize your thoughts, and find what matters —
               instantly.
             </p>
 
-            <div className="mt-10 flex gap-5">
+            <div className="mt-10 flex flex-wrap gap-5">
               <Link
                 href="/notes"
-                className="bg-pink-600 hover:bg-pink-500 px-8 py-4 rounded-xl font-semibold flex items-center gap-2"
+                className="flex items-center gap-2 rounded-xl bg-[#DC136C] px-8 py-4 font-semibold transition hover:bg-[#c01160]"
               >
                 Get Started
                 <ArrowRight size={18} />
               </Link>
 
-              <button className="text-lg text-gray-300 hover:text-white">
-                Learn More →
+              <button className="rounded-xl border border-white/10 px-8 py-4 text-gray-300 transition hover:border-white/20 hover:text-white">
+                Learn More
               </button>
             </div>
           </div>
 
-          {/* Right Hero Illustration */}
-          <div className="relative">
+          {/* Right Hero Image */}
+          <div className="relative flex justify-center">
             <div className="absolute inset-0 bg-pink-500/20 blur-[120px]" />
 
-            <div className="relative bg-[#131C31] border border-pink-500/20 rounded-3xl p-8 shadow-2xl">
-              <div className="space-y-4">
-                <div className="bg-[#1A243D] rounded-xl p-4">
-                  <h3 className="font-semibold text-pink-300">
-                    Project Ideas
-                  </h3>
-
-                  <ul className="mt-3 text-gray-400 space-y-2">
-                    <li>✓ Build Notes App</li>
-                    <li>✓ Next.js Portfolio</li>
-                    <li>✓ AI Assistant</li>
-                  </ul>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-[#1A243D] p-4 rounded-xl">
-                    <div className="text-pink-400 text-sm">
-                      Daily Journal
-                    </div>
-
-                    <div className="mt-2 text-gray-300">
-                      Productive day 🚀
-                    </div>
-                  </div>
-
-                  <div className="bg-[#1A243D] p-4 rounded-xl">
-                    <div className="text-purple-400 text-sm">Learning</div>
-
-                    <div className="mt-2 text-gray-300">
-                      Next.js App Router
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-[#1A243D] rounded-xl p-4">
-                  <div className="flex items-center gap-2 text-green-400">
-                    <Search size={18} />
-                    Instant Search
-                  </div>
-
-                  <p className="text-gray-400 mt-2">
-                    Find any note within seconds.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <Image
+              src="/hero-notes.png"
+              alt="Notes App"
+              width={900}
+              height={700}
+              priority
+              className="relative z-10 w-full max-w-2xl rounded-3xl object-contain drop-shadow-[0_0_60px_rgba(220,19,108,0.35)] transition duration-500 hover:scale-105"
+            />
           </div>
         </div>
       </section>
@@ -137,59 +113,77 @@ export default function LandingPage() {
       {/* Features */}
       <section
         id="features"
-        className="relative z-10 max-w-7xl mx-auto px-6 py-20"
+        className="relative z-10 mx-auto max-w-7xl px-6 py-16"
       >
-        <div className="grid md:grid-cols-4 gap-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <FeatureCard
-            icon={<Pencil />}
+            icon={<Pencil size={28} />}
             title="Write Freely"
             text="Capture your ideas and notes without distractions."
           />
 
           <FeatureCard
-            icon={<Folder />}
+            icon={<Folder size={28} />}
             title="Stay Organized"
-            text="Keep notes neatly categorized."
+            text="Use categories and tags to keep everything in place."
           />
 
           <FeatureCard
-            icon={<Search />}
+            icon={<Search size={28} />}
             title="Find Instantly"
-            text="Powerful search to find anything."
+            text="Powerful search helps you locate notes in seconds."
           />
 
           <FeatureCard
-            icon={<Shield />}
+            icon={<Shield size={28} />}
             title="Private & Safe"
-            text="Your notes belong only to you."
+            text="Your notes remain secure and accessible only to you."
           />
         </div>
       </section>
 
       {/* Stats */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pb-20">
-        <div className="border border-pink-500/10 rounded-3xl bg-[#111827]/70 backdrop-blur p-8">
-          <div className="grid md:grid-cols-5 gap-8 items-center">
+      <section
+        id="stats"
+        className="relative z-10 mx-auto max-w-7xl px-6 pb-20"
+      >
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-md">
+          <div className="grid gap-8 md:grid-cols-5">
             <div className="flex gap-4">
               <Heart className="text-pink-500" />
+
               <div>
                 <h3 className="font-semibold">
                   Loved by productivity enthusiasts
                 </h3>
 
-                <p className="text-gray-400 text-sm">
+                <p className="text-sm text-gray-400">
                   Join thousands using My Notes.
                 </p>
               </div>
             </div>
 
-            <Stat icon={<FileText />} value="10K+" label="Notes Created" />
-            <Stat icon={<Users />} value="5K+" label="Users" />
-            <Stat icon={<Zap />} value="99.9%" label="Uptime" />
+            <Stat
+              icon={<FileText size={22} />}
+              value="10K+"
+              label="Notes Created"
+            />
+
+            <Stat
+              icon={<Users size={22} />}
+              value="5K+"
+              label="Users"
+            />
+
+            <Stat
+              icon={<Zap size={22} />}
+              value="99.9%"
+              label="Uptime"
+            />
 
             <Link
               href="/notes"
-              className="bg-pink-600 text-center py-4 rounded-xl font-semibold hover:bg-pink-500"
+              className="rounded-xl bg-[#DC136C] py-4 text-center font-semibold transition hover:bg-[#c01160]"
             >
               Get Started
             </Link>
@@ -210,12 +204,12 @@ function FeatureCard({
   text: string;
 }) {
   return (
-    <div className="bg-[#131C31] border border-white/5 rounded-2xl p-6">
-      <div className="text-pink-400 mb-4">{icon}</div>
+    <div className="rounded-2xl border border-white/5 bg-[#131C31] p-6 transition hover:border-pink-500/20 hover:bg-[#17213a]">
+      <div className="mb-4 text-pink-400">{icon}</div>
 
-      <h3 className="font-semibold text-lg">{title}</h3>
+      <h3 className="text-lg font-semibold">{title}</h3>
 
-      <p className="text-gray-400 mt-2">{text}</p>
+      <p className="mt-2 text-gray-400">{text}</p>
     </div>
   );
 }
@@ -230,12 +224,12 @@ function Stat({
   label: string;
 }) {
   return (
-    <div className="flex gap-3 items-center">
+    <div className="flex items-center gap-3">
       <div className="text-purple-400">{icon}</div>
 
       <div>
         <div className="text-2xl font-bold">{value}</div>
-        <div className="text-gray-400 text-sm">{label}</div>
+        <div className="text-sm text-gray-400">{label}</div>
       </div>
     </div>
   );
