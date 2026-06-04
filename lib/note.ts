@@ -6,12 +6,16 @@ export type Note = {
     createdAt: string
 }
 
-export async function fetchNotes(){
-    const res = await fetch(`http://localhost:3000/api/notes`,{cache:"no-store"})
+export async function fetchNotes() {
+    const res = await fetch('http://localhost:3000/api/notes', {
+        cache: 'no-store',
+    });
 
-    if(!res.ok){
-        return [];
-    }
-    const resjson = await res.json();
-    return resjson.data;
+    console.log('Status:', res.status);
+
+    const json = await res.json();
+
+    console.log('Response:', json);
+
+    return json.data;
 }

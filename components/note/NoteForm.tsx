@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { PenLine, Save, X } from 'lucide-react';
 import { createNote, updateNote } from '@/app/actions/note-action';
 import { useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface NoteFormProps {
   note?: Note | null;
@@ -19,6 +20,8 @@ export default function NoteForm({ note, onClose }: NoteFormProps) {
   const [category, setCategory] = useState(note?.category ?? 'Personal');
 
   const [isPending, startTransition] = useTransition();
+
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +47,8 @@ export default function NoteForm({ note, onClose }: NoteFormProps) {
         setTitle('');
         setContent('');
         setCategory('Personal');
+
+        window.location.reload();
 
         onClose();
       } catch (error) {
