@@ -15,7 +15,7 @@ export function getBaseUrl() {
 }
 
 export async function fetchNotes() {
-    const res = await fetch(`${getBaseUrl()}/api/notes`, {
+    const res = await fetch(`${getBaseUrl()}/notes`, {
         cache: 'no-store',
     });
 
