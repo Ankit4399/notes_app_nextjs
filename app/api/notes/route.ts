@@ -45,25 +45,29 @@ export async function GET(req : NextRequest){
             {status: 500}
         )
     }
+
 }
 
-//create a note
-export async function POST(request : NextRequest) {
-    try {
-        const {title,content,category} = await request.json();
-        const note = await prisma.note.create({
-            data : {title,content,category}
-        })
+
+// we use server action for this
+
+//create a note 
+// export async function POST(request : NextRequest) {
+//     try {
+//         const {title,content,category} = await request.json();
+//         const note = await prisma.note.create({
+//             data : {title,content,category}
+//         })
     
-        return NextResponse.json(
-                {success : true,data : note},
-                {status: 200}
-            )  
-    } catch (error) {
-        return NextResponse.json(
-            {success : false,message : "Failed to create a note"},
-            {status: 500}
-        )
-    } 
-}
+//         return NextResponse.json(
+//                 {success : true,data : note},
+//                 {status: 200}
+//             )  
+//     } catch (error) {
+//         return NextResponse.json(
+//             {success : false,message : "Failed to create a note"},
+//             {status: 500}
+//         )
+//     } 
+// }
 

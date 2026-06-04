@@ -67,60 +67,8 @@ export default function Home() {
     };
   }, []);
 
-  const handleCreateOrUpdate = async (data: {
-    title: string;
-    content: string;
-    category: string;
-  }) => {
-    try {
-      if (editingNote) {
-        // Update note
-        const res = await fetch(`/api/notes/${editingNote.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        if (res.ok) {
-          const updatedNote = await res.json();
-          setNotes(
-            notes.map((n) =>
-              n.id === editingNote.id ? updatedNote.data : n
-            )
-          );
-        }
-      } else {
-        // Create note
-        const res = await fetch('/api/notes', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        if (res.ok) {
-          const newNote = await res.json();
-          setNotes([newNote.data, ...notes]);
-        }
-      }
-      setEditingNote(null);
-      setIsFormOpen(false);
-    } catch (error) {
-      console.error('Failed to save note:', error);
-      alert('Failed to save note');
-    }
-  };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this note?')) return;
 
-    try {
-      const res = await fetch(`/api/notes/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setNotes(notes.filter((n) => n.id !== id));
-      }
-    } catch (error) {
-      console.error('Failed to delete note:', error);
-      alert('Failed to delete note');
-    }
-  };
 
   const handleEdit = (note: Note) => {
     setEditingNote(note);
@@ -144,17 +92,17 @@ export default function Home() {
           <div className="min-w-0">
             <div className="flex items-center gap-3">
               <Link
-                  href="/"
-                  className="flex items-center gap-3 hover:opacity-90 transition"
-                >
-              <span 
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#F7C1BB] text-[#353A47]"
+                href="/"
+                className="flex items-center gap-3 hover:opacity-90 transition"
               >
-                <BookOpen size={28} />
-              </span>
-              <h1 className="truncate text-4xl font-bold tracking-normal text-white sm:text-5xl">
-                My Notes
-              </h1>
+                <span
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#F7C1BB] text-[#353A47]"
+                >
+                  <BookOpen size={28} />
+                </span>
+                <h1 className="truncate text-4xl font-bold tracking-normal text-white sm:text-5xl">
+                  My Notes
+                </h1>
 
               </Link>
             </div>
@@ -234,7 +182,6 @@ export default function Home() {
                 key={note.id}
                 note={note}
                 onEdit={handleEdit}
-                onDelete={handleDelete}
               />
             ))}
           </section>
@@ -246,7 +193,6 @@ export default function Home() {
           key={editingNote?.id ?? 'new-note'}
           note={editingNote}
           onClose={handleCloseForm}
-          onSave={handleCreateOrUpdate}
         />
       )}
     </main>
